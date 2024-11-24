@@ -21,14 +21,17 @@ public class TaskEntity {
     private String nameTask;
     @Column(name = "description_task")
     private String descriptionTask;
-    @Column(name = "expiration_date_task")
+    @Column(name = "expiration_date_task", nullable = false, columnDefinition = "DATE")
     private LocalDate expirationDateTask;
     @Enumerated(EnumType.STRING)
     @Column(name = "status_task")
     private Status statusTask;
 
-
-    private Integer idPriorityTask;
-    private Integer idProjectTask;
+    @OneToOne
+    @JoinColumn(name = "id_priority_task", nullable = false, referencedColumnName = "id_priority", insertable = false, updatable = false)
+    private PriorityEntity idPriorityTask;
+    @OneToOne
+    @JoinColumn(name = "id_project_task", nullable = false, referencedColumnName = "id_project", insertable = false, updatable = false)
+    private ProjectEntity idProjectTask;
 
 }

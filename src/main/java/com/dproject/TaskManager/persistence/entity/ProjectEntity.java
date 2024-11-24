@@ -20,8 +20,8 @@ public class ProjectEntity {
     private String nameProject;
     @Column(name = "description_project")
     private String descriptionProject;
-    @Column(name = "start_date_project")
+    @Column(name = "start_date_project", nullable = false, columnDefinition = "DATE")
     private LocalDate starDateProject;
-    @Column(name = "end_date_project")
+    @Column(name = "end_date_project", nullable = false, columnDefinition = "DATE")
     private LocalDate endDateProject;
 }

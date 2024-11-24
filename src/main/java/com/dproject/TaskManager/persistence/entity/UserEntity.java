@@ -21,6 +21,6 @@ public class UserEntity {
     private String nameUser;
     @Column(name = "email_user")
     private String emailUser;
-    @Column(name = "record_date_user")
+    @Column(name = "record_date_user", nullable = false, columnDefinition = "DATE")
     private LocalDate recordDateUser;
 }
