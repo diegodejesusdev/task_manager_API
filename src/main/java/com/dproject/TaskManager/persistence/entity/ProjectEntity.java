@@ -1,6 +1,10 @@
 package com.dproject.TaskManager.persistence.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +25,12 @@ public class ProjectEntity {
     @Column(name = "description_project")
     private String descriptionProject;
     @Column(name = "start_date_project", nullable = false, columnDefinition = "DATE")
-    private LocalDate starDateProject;
+    private LocalDate startDateProject;
     @Column(name = "end_date_project", nullable = false, columnDefinition = "DATE")
     private LocalDate endDateProject;
+
+    @OneToMany(mappedBy = "projectTask", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<TaskEntity> tasks = new ArrayList<>();
+
 }

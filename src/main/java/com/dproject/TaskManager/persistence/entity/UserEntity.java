@@ -1,11 +1,13 @@
 package com.dproject.TaskManager.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +23,10 @@ public class UserEntity {
     private String nameUser;
     @Column(name = "email_user")
     private String emailUser;
-    @Column(name = "record_date_user", nullable = false, columnDefinition = "DATE")
+    @Column(name = "record_date_user", columnDefinition = "DATE")
     private LocalDate recordDateUser;
+
+    @ManyToMany(mappedBy = "assignedUsers")
+    @JsonIgnore
+    private List<TaskEntity> tasks;
 }

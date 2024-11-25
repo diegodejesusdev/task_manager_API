@@ -1,4 +1,7 @@
 package com.dproject.TaskManager.persistence.repository;
 
-public interface TagRepository {
+import com.dproject.TaskManager.persistence.entity.TagEntity;
+import org.springframework.data.repository.ListCrudRepository;
+
+public interface TagRepository extends ListCrudRepository<TagEntity, Integer> {
 }
