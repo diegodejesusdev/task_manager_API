@@ -33,10 +33,10 @@ public class TaskEntity {
     private Status statusTask;
 
     @ManyToOne
-    @JoinColumn(name = "id_priority_task", nullable = false, referencedColumnName = "id_priority", insertable = false, updatable = false)
+    @JoinColumn(name = "id_priority_task", nullable = false, referencedColumnName = "id_priority")
     private PriorityEntity priorityTask;
     @ManyToOne
-    @JoinColumn(name = "id_project_task", nullable = false, referencedColumnName = "id_project", insertable = false, updatable = false)
+    @JoinColumn(name = "id_project_task", nullable = false, referencedColumnName = "id_project")
     private ProjectEntity projectTask;
     @ManyToMany
     @JoinTable(name = "task_tag",
