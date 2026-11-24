@@ -1,129 +1,95 @@
-## Documentación de Endpoints
+# ✅ Task Manager API
 
-## Endpoints de Project Controller
+API REST para gestionar **proyectos, tareas, usuarios y etiquetas**, construida con **Java 21 + Spring Boot 3.4** y **MySQL**. Fue el backend de una aplicación de gestión de tareas (frontend en React, en el repo archivado `task_manager_Frontend`).
 
-### GET 
-#### /project/all
+![Java](https://img.shields.io/badge/Java_21-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.4-6DB33F?style=flat-square&logo=springboot&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 
-Este endpoint devuelve todos los proyectos que se encuentran en la base de datos.
+## ¿Qué hace?
 
-- URL: https://task-manager2-latest.onrender.com/taskmanager/project/all
+- Crea y lista **proyectos** con fechas de inicio y fin, y devuelve las tareas de cada proyecto.
+- Crea, lista y elimina **tareas** con descripción, fecha de vencimiento, estado (`Pendiente`, `En_Proceso`, `Terminada`), prioridad y proyecto.
+- **Asigna usuarios** a una tarea y consulta quiénes están asignados.
+- Crea **etiquetas** y las asocia a tareas (relación muchos a muchos).
+- Registra, busca por correo y elimina **usuarios**.
 
+## Modelo de datos
 
-### POST
-#### /project/save
-
-Este endpoint permite guardar un proyecto en la base de datos.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/project/save
-- Body: 
-```json
-{
-  "nameProject":"Trabajo Final Electiva IV",
-  "descriptionProject":"Trabajo final",
-  "startDateProject":"2024-11-25",
-  "endDateProject":"2024-11-28"
-}
 ```
-### GET
-#### /project/{idProject}/tasks
-
-Este endpoint devuelve todas las tareas que se encuentran en un proyecto específico.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/project/1/tasks
-
-## Endpoints de User Controller
-
-### GET
-#### /user/all
-
-Este endpoint devuelve todos los usuarios que se encuentran en la base de datos.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/user/all
-
-### POST
-#### /user/save
-
-Este endpoint permite guardar un usuario en la base de datos.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/user/save
-- Body:
-```json
-{
-  "nameUser": "Jean Pierre Castrillon",
-  "emailUser": "jean@gmail.com"
-}
-```
-### DELETE
-#### /user/delete/{idUser}
-
-Este endpoint permite eliminar un usuario de la base de datos.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/user/delete/2
-
-## Endpoints de Task Controller
-
-### GET
-#### /task/all
-
-Este endpoint devuelve todas las tareas que se encuentran en la base de datos.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/task/all
-
-### POST
-#### /task/save
-
-Este endpoint permite guardar una tarea en la base de datos.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/task/save
-- Body:
-```json
-{
-  "nameTask": "Crear repositorio en GitHub",
-  "descriptionTask": "Jajajaja",
-  "expirationDateTask": "2024-11-24",
-  "statusTask": "Pendiente",
-  "priorityTask": {
-    "idPriority": 2
-  },
-  "projectTask": {
-    "idProject": 2
-  }
-}
+Project 1 ──── * Task * ──── * User      (asignaciones)
+                 │ *
+                 ├──── * Tag              (task_tag)
+                 └──── 1 Priority
 ```
 
-### GET
-#### /task/{idTask}/users
+Entidades JPA en `persistence/entity`: `ProjectEntity`, `TaskEntity`, `UserEntity`, `TagEntity`, `PriorityEntity`, `AssigmentEntity`, `TaskTagEntity` y el enum `Status`.
 
-Este endpoint devuelve todos los usuarios que se encuentran asignados a una tarea específica.
+## Arquitectura
 
-- URL: https://task-manager2-latest.onrender.com/taskmanager/task/2/users
-
-### POST
-#### /task/{idTask}/assign/{idUser}
-
-Este endpoint permite asignar un usuario a una tarea.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/task/2/assign/3
-
-### POST
-#### /task/{idTask}/tag/{idTag}
-
-Este endpoint permite asignar etiquetas a una tarea.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/task/2/tag/4
-
-## Endpoints de Tag Controller
-
-### POST
-#### /tag/save
-
-Este endpoint permite guardar una etiqueta en la base de datos.
-
-- URL: https://task-manager2-latest.onrender.com/taskmanager/tag/save
-
-```json
-{
-  "nameTag":"Social"
-}
 ```
+web/            Controladores REST (Project, Task, User, Tag) + configuración CORS
+services/       Lógica de negocio
+persistence/    Entidades JPA y repositorios Spring Data
+```
+
+Todas las rutas cuelgan de `/taskmanager` (`spring.mvc.servlet.path`).
+
+## Endpoints
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| GET | `/project/all` | Lista todos los proyectos |
+| GET | `/project/name?name=` | Busca un proyecto por nombre |
+| POST | `/project/save` | Crea o actualiza un proyecto |
+| GET | `/project/{id}/tasks` | Tareas de un proyecto |
+| GET | `/task/all` | Lista todas las tareas |
+| POST | `/task/save` | Crea o actualiza una tarea |
+| GET | `/task/{taskId}/users` | Usuarios asignados a una tarea |
+| POST | `/task/{taskId}/assign/{userId}` | Asigna un usuario a una tarea |
+| POST | `/task/{taskId}/tag/{tagId}` | Agrega una etiqueta a una tarea |
+| DELETE | `/task/delete/{id}` | Elimina una tarea |
+| GET | `/user/all` | Lista los usuarios |
+| GET | `/user/email?email=` | Busca un usuario por correo |
+| POST | `/user/save` | Crea o actualiza un usuario |
+| DELETE | `/user/delete/{id}` | Elimina un usuario |
+| GET | `/tag/all` | Lista las etiquetas |
+| POST | `/tag/save` | Crea una etiqueta |
+
+Ejemplo — crear un proyecto:
+
+```bash
+curl -X POST http://localhost:8080/taskmanager/project/save \
+  -H "Content-Type: application/json" \
+  -d '{"nameProject":"Trabajo Final","descriptionProject":"Electiva IV","startDateProject":"2024-11-25","endDateProject":"2024-11-28"}'
+```
+
+## Cómo ejecutarlo
+
+Requisitos: JDK 21, Maven y MySQL 8 con una base `task_manager`.
+
+```bash
+# 1. Configura usuario y contraseña de MySQL en src/main/resources/application.properties
+# 2. Ejecuta
+./mvnw spring-boot:run
+# API en http://localhost:8080/taskmanager
+```
+
+Con Docker (el `Dockerfile` copia el JAR ya compilado):
+
+```bash
+./mvnw clean package
+cp target/TaskManager-0.0.1-SNAPSHOT.jar target/TaskManager.jar
+docker build -t task-manager .
+docker run -p 8080:8080 task-manager
+```
+
+El CORS solo permite `http://localhost:5173` (el frontend con Vite). La API estuvo desplegada en Render en `https://task-manager2-latest.onrender.com/taskmanager`.
+
+## Pendientes conocidos
+
+- Las credenciales de MySQL están escritas en `application.properties`; deberían leerse de variables de entorno.
+- No tiene autenticación ni validación de datos de entrada.
+- El `Dockerfile` espera `target/TaskManager.jar`, pero Maven genera `TaskManager-0.0.1-SNAPSHOT.jar` (falta `<finalName>` en el `pom.xml`).
+- No tiene pruebas más allá del test de arranque de Spring.
