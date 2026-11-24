@@ -70,8 +70,11 @@ curl -X POST http://localhost:8080/taskmanager/project/save \
 Requisitos: JDK 21, Maven y MySQL 8 con una base `task_manager`.
 
 ```bash
-# 1. Configura usuario y contraseña de MySQL en src/main/resources/application.properties
-# 2. Ejecuta
+# Credenciales por variables de entorno (valores por defecto: localhost, root, sin contraseña)
+export DATABASE_URL=jdbc:mysql://localhost:3306/task_manager
+export DATABASE_USER=root
+export DATABASE_PASSWORD=tu_password
+
 ./mvnw spring-boot:run
 # API en http://localhost:8080/taskmanager
 ```
@@ -82,14 +85,13 @@ Con Docker (el `Dockerfile` copia el JAR ya compilado):
 ./mvnw clean package
 cp target/TaskManager-0.0.1-SNAPSHOT.jar target/TaskManager.jar
 docker build -t task-manager .
-docker run -p 8080:8080 task-manager
+docker run -p 8080:8080 -e DATABASE_URL=... -e DATABASE_USER=... -e DATABASE_PASSWORD=... task-manager
 ```
 
 El CORS solo permite `http://localhost:5173` (el frontend con Vite). La API estuvo desplegada en Render en `https://task-manager2-latest.onrender.com/taskmanager`.
 
 ## Pendientes conocidos
 
-- Las credenciales de MySQL están escritas en `application.properties`; deberían leerse de variables de entorno.
 - No tiene autenticación ni validación de datos de entrada.
 - El `Dockerfile` espera `target/TaskManager.jar`, pero Maven genera `TaskManager-0.0.1-SNAPSHOT.jar` (falta `<finalName>` en el `pom.xml`).
 - No tiene pruebas más allá del test de arranque de Spring.
